@@ -1,0 +1,12 @@
+#VS
+/GVI.VC.db
+/x64/Debug/*.exe
+/x64/Debug/*.ilk
+/x64/Debug/*.pdb
+/GVI/x64
+/GVI/*.user
+/GVI.VC.VC.opendb
+/.vs
+*.suo
+*.sdf
+/GVI/GeneratedFiles

@@ -1,0 +1,364 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Source Files\thirdPartys">
+      <UniqueIdentifier>{5e804c6a-ce73-4fe6-a7af-bd010930a458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdPartys">
+      <UniqueIdentifier>{78c91240-0d23-4907-8917-b453d72b5895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdPartys\LBP">
+      <UniqueIdentifier>{f75c0a15-703a-42cc-8d3a-fd04cbb6148a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdPartys\LBP">
+      <UniqueIdentifier>{c253c5e5-7455-4234-91a8-3da2db9fa4d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdPartys\EASYPR">
+      <UniqueIdentifier>{9b6713e4-821a-4b76-8b4b-a5d95b4783af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdPartys\MSER">
+      <UniqueIdentifier>{f75fb7e2-da92-422e-85fa-c1eab46f95ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdPartys\SVM">
+      <UniqueIdentifier>{af050de5-8f29-4291-afdd-92864a5ad9b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdPartys\TEXTDETECT">
+      <UniqueIdentifier>{38f729ac-e35c-43a6-a6a6-f6ebea2dd255}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdPartys\XMLPARSER">
+      <UniqueIdentifier>{8ec0eb0d-6fba-4b34-8795-44e14f39c7bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdPartys\MSER">
+      <UniqueIdentifier>{8bd2c65a-afe5-4943-b4d5-894526c9b125}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdPartys\SVM">
+      <UniqueIdentifier>{381b8a73-baf0-4b70-a3a1-83a5aa24bf13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdPartys\TEXTDETECT">
+      <UniqueIdentifier>{60539e55-c192-4d3b-aef3-94281b80d6b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdPartys\XMLPARSER">
+      <UniqueIdentifier>{13086aa4-b122-4789-883b-36ab61deb170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdPartys\EASYPR">
+      <UniqueIdentifier>{3d66bc11-0635-42da-9e94-455af1e52378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GVI">
+      <UniqueIdentifier>{95a9b830-72f7-4364-a9c9-e5c75f432161}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GVI\GVIUIPlugin">
+      <UniqueIdentifier>{195684b4-30d4-434b-9a49-09098989f8da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GVI\GVIUtils">
+      <UniqueIdentifier>{c839d237-242a-46ee-9c4c-37dbcb9171bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GVI">
+      <UniqueIdentifier>{20f51aef-45e3-4e26-8b7d-538b5cc099c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GVI\GVIConsts">
+      <UniqueIdentifier>{14d457d2-244d-49ec-be75-db4d00865fe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GVI\GVIUIPlugin">
+      <UniqueIdentifier>{2538e75f-70b5-419a-9000-8b1788db5e63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GVI\GVIUtils">
+      <UniqueIdentifier>{c87c5b04-8e70-4deb-8862-4e0d22c1b3a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GVI\GVIDataRole">
+      <UniqueIdentifier>{c48d373b-6a91-44db-b5e8-0cff45e9f446}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GVI\GVIDataRole">
+      <UniqueIdentifier>{ace29e0d-21c1-4e26-ac51-457ecfc88a2e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="GVIApplication.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\GVIUIPlugin\GVIApplication.cpp">
+      <Filter>Source Files\GVI\GVIUIPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUIPlugin\GVIMainFrame.cpp">
+      <Filter>Source Files\GVI\GVIUIPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUIPlugin\GVIPushButton.cpp">
+      <Filter>Source Files\GVI\GVIUIPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\LBP\helper.cpp">
+      <Filter>Source Files\thirdPartys\LBP</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\LBP\lbp.cpp">
+      <Filter>Source Files\thirdPartys\LBP</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\mser\mser2.cpp">
+      <Filter>Source Files\thirdPartys\MSER</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\svm\corrected_svm.cpp">
+      <Filter>Source Files\thirdPartys\SVM</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\textDetect\erfilter.cpp">
+      <Filter>Source Files\thirdPartys\TEXTDETECT</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\xmlParser\xmlParser.cpp">
+      <Filter>Source Files\thirdPartys\XMLPARSER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUIPlugin\GVIBaseFrame.cpp">
+      <Filter>Source Files\GVI\GVIUIPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUIPlugin\GVIIdentifyResultFrame.cpp">
+      <Filter>Source Files\GVI\GVIUIPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUIPlugin\GVIProgressDialog.cpp">
+      <Filter>Source Files\GVI\GVIUIPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\chars_identify.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\chars_recognise.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\chars_segment.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\core_func.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\feature.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\params.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\plate_detect.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\plate_judge.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\plate_locate.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\core\plate_recognize.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\train\annCh_train.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\train\ann_train.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\train\create_data.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\train\svm_train.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\train\train.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\util\kv.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\util\program_options.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdPartys\EASYPR\src\util\util.cpp">
+      <Filter>Source Files\thirdPartys\EASYPR</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUtils\GVIDateTime.cpp">
+      <Filter>Source Files\GVI\GVIUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUtils\GVIImageContainer.cpp">
+      <Filter>Source Files\GVI\GVIUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUtils\GVIImageConverter.cpp">
+      <Filter>Source Files\GVI\GVIUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUtils\GVIImageProcessor.cpp">
+      <Filter>Source Files\GVI\GVIUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUtils\GVIImageSimilarityCalculator.cpp">
+      <Filter>Source Files\GVI\GVIUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIUtils\GVIVideoProcessor.cpp">
+      <Filter>Source Files\GVI\GVIUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GVIDataRole\GVIImageDataRole.cpp">
+      <Filter>Source Files\GVI\GVIDataRole</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\GVIConsts\GVIConsts.h">
+      <Filter>Header Files\GVI\GVIConsts</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIConsts\GVIMacro.h">
+      <Filter>Header Files\GVI\GVIConsts</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUIPlugin\GVIPushButton.h">
+      <Filter>Header Files\GVI\GVIUIPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="include\easypr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\LBP\helper.hpp">
+      <Filter>Header Files\thirdPartys\LBP</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\LBP\lbp.hpp">
+      <Filter>Header Files\thirdPartys\LBP</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\mser\mser2.hpp">
+      <Filter>Header Files\thirdPartys\MSER</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\svm\precomp.hpp">
+      <Filter>Header Files\thirdPartys\SVM</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\xmlParser\xmlParser.h">
+      <Filter>Header Files\thirdPartys\XMLPARSER</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\textDetect\erfilter.hpp">
+      <Filter>Header Files\thirdPartys\TEXTDETECT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUIPlugin\GVIIdentifyResultFrame.h">
+      <Filter>Header Files\GVI\GVIUIPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\character.hpp">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\chars_identify.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\chars_recognise.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\chars_segment.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\core_func.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\feature.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\params.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\plate.hpp">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\plate_detect.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\plate_judge.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\plate_locate.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\core\plate_recognize.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\train\annCh_train.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\train\ann_train.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\train\create_data.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\train\svm_train.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\train\train.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\util\kv.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\util\program_options.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\util\switch.hpp">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\util\util.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\api.hpp">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\config.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdPartys\EASYPR\include\version.h">
+      <Filter>Header Files\thirdPartys\EASYPR</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUtils\GVIDateTime.h">
+      <Filter>Header Files\GVI\GVIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUtils\GVIImageContainer.h">
+      <Filter>Header Files\GVI\GVIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUtils\GVIImageConverter.h">
+      <Filter>Header Files\GVI\GVIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUtils\GVIImageProcessor.h">
+      <Filter>Header Files\GVI\GVIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUtils\GVIImageSimilarityCalculator.h">
+      <Filter>Header Files\GVI\GVIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIUtils\GVIVideoProcessor.h">
+      <Filter>Header Files\GVI\GVIUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GVIDataRole\GVIImageDataRole.h">
+      <Filter>Header Files\GVI\GVIDataRole</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="include\GVIUIPlugin\GVIApplication.h">
+      <Filter>Header Files\GVI\GVIUIPlugin</Filter>
+    </QtMoc>
+    <QtMoc Include="include\GVIUIPlugin\GVIBaseFrame.h">
+      <Filter>Header Files\GVI\GVIUIPlugin</Filter>
+    </QtMoc>
+    <QtMoc Include="include\GVIUIPlugin\GVIProgressDialog.h">
+      <Filter>Header Files\GVI\GVIUIPlugin</Filter>
+    </QtMoc>
+    <QtMoc Include="include\GVIUIPlugin\GVIMainFrame.h">
+      <Filter>Header Files\GVI\GVIUIPlugin</Filter>
+    </QtMoc>
+  </ItemGroup>
+</Project>
