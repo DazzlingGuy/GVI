@@ -1,4 +1,4 @@
-﻿Glodon Vehicle Identification. (Identify deck vehicles)
+Global Vehicle Identification. (Identify deck vehicles)
 
 Copyright ©  Team Very 3 & 1 2018 - 2019.
 
