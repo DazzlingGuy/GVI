@@ -1,6 +1,8 @@
 #ifndef _GVICONSTS_H
 #define _GVICONSTS_H
 
+#include <QString>
+
 namespace gviimagepath
 {
     const QString strAppIcon = "/icons/app-logo.png";

@@ -16,6 +16,7 @@ class GVIVideoProcessor;
 class GVIDateTime;
 class GVIImageProcessor;
 class GVIProgressDialog;
+class GVIImageDataRole;
 
 class GVIMainFrame : public QWidget
 {
@@ -29,8 +30,6 @@ public:
     void refreshIdentifyFramePosition();
 
 protected:
-    void init();
-
     void loadNextImage();
     void loadPrevImage();
 
@@ -46,38 +45,26 @@ protected:
     void onRefreshVideoImage();
 
 private:
+    void init();
     void initStyle();
     void initControl();
     void initLayout();
     void initSlots();
     void initInageLabel();
 
-    cv::Mat getMaskImageByIndex(int nIndex);
-    cv::Mat getMaskImageByPath(const QString &path);
-    cv::Mat getProcessImageByIndex(int nIndex);
-    cv::Mat getProcessImageByPath(const QString &path);
+    void beginImageSimilartyMatch();
 
-    void reLoad();
-    void reLoadData();
-    void reLoadImageContainer();
+    bool canShowIdentifyFrame();
 
-    void createProgressDialog();
-
-    void doSimilartyMatch();
-    void processImage();
-    void markSrcImage(cv::Mat srcImage);
-    void calcSimilarty();
-    void dealMaskImage();
-
-    void doShowMatchResult();
-    void updateIdentifyFrameInfo();
-    void showMessageBox();
+    void beginShowIdentifyFrame();
+    void beginUpdateIdentifyFrame();
+    void beginShowIdentifyMsgBox();
 
     void showIdentifyFrame();
     void hideIdentifyFrame();
     void moveIdentifyFrame();
-    void canShowIdentifyFrame();
 
+    void createProgressDialog();
     void freeProcessDialog();
 
     inline QHBoxLayout* createCommonHBoxLayout(QWidget *parent = nullptr);
@@ -95,11 +82,11 @@ private:
     GVIPushButton *m_pPrevBtn;
     GVIPushButton *m_pNextBtn;
 
+    GVIImageDataRole *m_pImageDataRole;
+
     GVIImageContainer *m_pCameraImageContainer;
-    GVIImageContainer *m_pCarOriginalImageContainer;
 
     GVIVideoProcessor *m_pVideoProcessor;
-    GVIImageProcessor *m_pImageProcessor;
 
     GVIDateTime *m_pDateTime;
 
@@ -109,18 +96,6 @@ private:
     GVIProgressDialog *m_pProgressDialog;
 
     bool m_bIsPlay;
-
-    bool m_bIsFake;
-
-    cv::Mat m_finalProcessedSrcImage;
-
-    QVector<int> m_oFakeImageIndex;
-
-    int m_nFinalMaxSimilartyIndex;
-    double m_dFinalMaxSimilarty;
-
-    int m_nFinalFakeSimilartyIndex;
-    double m_dFinalFakeSimilarty;
 };
 
 #endif // _GVIMAINFRAME_H

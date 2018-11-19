@@ -3,12 +3,11 @@
 #include "GVIImageContainer.h"
 #include "GVIConsts.h"
 #include "GVIMacro.h"
-#include "GVIImageProcessor.h"
 #include "GVIImageConverter.h"
 #include "GVIIdentifyResultFrame.h"
 #include "GVIVideoProcessor.h"
 #include "GVIDateTime.h"
-#include "GVIImageSimilarityCalculator.h"
+#include <GVIImageDataRole.h>
 #include "GVIProgressDialog.h"
 
 #include <QTimer>
@@ -22,8 +21,6 @@
 
 const int c_nImageHeight = 465;
 const int c_nImageWidth = 465;
-
-const double c_dPlateRegion = 1.8;
 
 const double c_dFakeThreshold = 0.7;
 
@@ -42,17 +39,10 @@ GVIMainFrame::GVIMainFrame(QWidget *parent)
     , m_pDateTime(nullptr)
     , m_pIdentifyFrame(nullptr)
     , m_pProgressDialog(nullptr)
-    , m_pVideoProcessor(new GVIVideoProcessor())
-    , m_pImageProcessor(new GVIImageProcessor())
-    , m_pCameraImageContainer(new GVIImageContainer(gviimagepath::strCameraImages))
-    , m_pCarOriginalImageContainer(new GVIImageContainer(gviimagepath::strCarOriginalImages))
     , m_qTimer(new QTimer())
     , m_bIsPlay(false)
-    , m_bIsFake(false)
-    , m_dFinalMaxSimilarty(0)
-    , m_dFinalFakeSimilarty(0)
-    , m_nFinalMaxSimilartyIndex(-1)
-    , m_nFinalFakeSimilartyIndex(-1)
+    , m_pCameraImageContainer(new GVIImageContainer(gviimagepath::strCameraImages))
+    , m_pVideoProcessor(new GVIVideoProcessor())
 {
     init();
 }
@@ -61,7 +51,6 @@ GVIMainFrame::~GVIMainFrame()
 {
     FREEANDNIL(m_pCameraImageContainer);
     FREEANDNIL(m_pVideoProcessor);
-    FREEANDNIL(m_pImageProcessor);
 }
 
 void GVIMainFrame::refreshIdentifyFramePosition()
@@ -239,9 +228,9 @@ void GVIMainFrame::moveIdentifyFrame()
     m_pIdentifyFrame->move(point.x() + 798, point.y() - 164);
 }
 
-void GVIMainFrame::canShowIdentifyFrame()
+bool GVIMainFrame::canShowIdentifyFrame()
 {
-    return !m_pCameraImageContainer->isEmpty() && !m_pCarOriginalImageContainer->isEmpty();
+    return true;
 }
 
 void GVIMainFrame::freeProcessDialog()
@@ -258,272 +247,43 @@ void GVIMainFrame::onRefreshVideoImage()
 
 void GVIMainFrame::onIdentifyClicked()
 {
-    reLoad();
+    //createProgressDialog();
 
-    createProgressDialog();
+    beginImageSimilartyMatch();
 
-    doSimilartyMatch();
+    beginShowIdentifyFrame();
 
-    doShowMatchResult();
-
-    freeProcessDialog();
-}
-
-void GVIMainFrame::reLoad()
-{
-    reLoadData();
-    reLoadImageContainer();
-}
-
-void GVIMainFrame::reLoadData()
-{
-    m_oFakeImageIndex.clear();
-
-    m_nFinalMaxSimilartyIndex = -1;
-    m_dFinalMaxSimilarty = 0;
-
-    m_nFinalFakeSimilartyIndex = -1;
-    m_dFinalFakeSimilarty = 0;
-
-    m_bIsFake = false;
-}
-
-void GVIMainFrame::reLoadImageContainer()
-{
-    m_pCameraImageContainer->reLoadContainer();
-    m_pCameraImageContainer->setCurImage(-1);
-    loadNextImage();
-
-    m_pCarOriginalImageContainer->reLoadContainer();
-    m_pCarOriginalImageContainer->setCurImage(0);
+    //freeProcessDialog();
 }
 
 void GVIMainFrame::createProgressDialog()
 {
-    if (!canShowIdentifyFrame())
-    {
-        return;
-    }
-
-    QCoreApplication::processEvents();
-    m_pProgressDialog = new GVIProgressDialog(s_szIdentifyTips, m_pCarOriginalImageContainer->getImagesCount(), this);
-    m_pProgressDialog->updateProgress(0);
-    m_pProgressDialog->show();
+//     if (!canShowIdentifyFrame())
+//     {
+//         return;
+//     }
+// 
+//     QCoreApplication::processEvents();
+//     m_pProgressDialog = new GVIProgressDialog(s_szIdentifyTips, m_pCarOriginalImageContainer->getImagesCount(), this);
+//     m_pProgressDialog->updateProgress(0);
+//     m_pProgressDialog->show();
 }
 
-void GVIMainFrame::doSimilartyMatch()
+void GVIMainFrame::beginImageSimilartyMatch()
 {
-    processImage();
-
-    calcSimilarty();
-
-    dealMaskImage();
+    m_pImageDataRole = new GVIImageDataRole(m_pCameraImageContainer->getCurImagePath());
 }
 
-void GVIMainFrame::processImage()
+void GVIMainFrame::beginShowIdentifyFrame()
 {
-    m_finalProcessedSrcImage = getProcessImageByPath(m_pCameraImageContainer->getCurImagePath());
-    if (m_finalProcessedSrcImage.empty())
-    {
-        return;
-    }
-
-    markSrcImage(m_pImageProcessor->getSrcImage());
-}
-
-void GVIMainFrame::markSrcImage(cv::Mat srcImage)
-{
-    Rect plateRegion = m_pImageProcessor->getProcessedRegion(c_dPlateRegion);
-    rectangle(srcImage, plateRegion, Scalar(0, 0, 255), 3);
-
-    GVIImageConverter converter;
-    m_pMatchImageLabel->setPixmap(QPixmap::fromImage(converter.converterQImage(srcImage, m_pVideoImageLabel->size())));
-}
-
-void GVIMainFrame::calcSimilarty()
-{
-    for (size_t i = 0; i < m_pCarOriginalImageContainer->getImagesCount(); i++)
-    {
-        cv::Mat originalProcessedImage = getProcessImageByIndex(i);
-
-        double similartyValue = GVIImageSimilarityCalculator::orb_sim(m_finalProcessedSrcImage, originalProcessedImage);
-
-        if (m_dFinalMaxSimilarty < similartyValue && c_dFakeThreshold < similartyValue)
-        {
-            m_dFinalMaxSimilarty = similartyValue;
-            m_nFinalMaxSimilartyIndex = i;
-        }
-        else if (c_dFakeThreshold > similartyValue)
-        {
-            m_oFakeImageIndex.append(i);
-        }
-
-        QCoreApplication::processEvents();
-        m_pProgressDialog->updateProgress(i + 1);
-    }
-}
-
-void GVIMainFrame::dealMaskImage()
-{
-    cv::Mat finalMaskSrcImage = getMaskImageByPath(m_pCameraImageContainer->getCurImagePath());
-    if (finalMaskSrcImage.empty())
-    {
-        return;
-    }
-
-    if (-1 != m_nFinalMaxSimilartyIndex)
-    {
-        cv::Mat finalMaskDstImage = getMaskImageByIndex(m_nFinalMaxSimilartyIndex);
-        if (finalMaskDstImage.empty())
-        {
-            return;
-        }
-
-        double dSimilarty = GVIImageSimilarityCalculator::orb_sim(finalMaskSrcImage, finalMaskDstImage);
-
-        if (dSimilarty < c_dFakeThreshold)
-        {
-            m_dFinalFakeSimilarty = m_dFinalMaxSimilarty;
-            m_nFinalFakeSimilartyIndex = m_nFinalMaxSimilartyIndex;
-            m_bIsFake = true;
-        }
-    }
-    else
-    {
-        foreach(auto nIndex, m_oFakeImageIndex)
-        {
-            cv::Mat finalMaskDstImage = getMaskImageByIndex(nIndex);
-            if (finalMaskDstImage.empty())
-            {
-                return;
-            }
-
-            cv::Mat finalMaskSrcImage = getMaskImageByPath(m_pCameraImageContainer->getCurImagePath());
-            if (finalMaskSrcImage.empty())
-            {
-                return;
-            }
-
-            double dSimilarty = GVIImageSimilarityCalculator::orb_sim(finalMaskSrcImage, finalMaskDstImage);
-
-            if (dSimilarty > m_dFinalFakeSimilarty && dSimilarty > c_dFakeThreshold)
-            {
-                m_dFinalFakeSimilarty = dSimilarty;
-                m_nFinalFakeSimilartyIndex = nIndex;
-
-                m_bIsFake = true;
-            }
-            else if (dSimilarty > m_dFinalFakeSimilarty && dSimilarty < c_dFakeThreshold)
-            {
-                m_dFinalMaxSimilarty = dSimilarty;
-                m_nFinalMaxSimilartyIndex = nIndex;
-            }
-        }
-    }
-}
-
-cv::Mat GVIMainFrame::getMaskImageByIndex(int nIndex)
-{
-    cv::Mat originalImage = imread(m_pCarOriginalImageContainer->getImagePath(nIndex).toStdString());
-    if (originalImage.empty())
-    {
-        return Mat();
-    }
-
-    m_pImageProcessor->readImage(originalImage);
-    if (!m_pImageProcessor->startProcess())
-    {
-        return Mat();
-    }
-
-    cv::Mat originalMaskImage = m_pImageProcessor->getMaskImage();
-    if (originalMaskImage.empty())
-    {
-        return Mat();
-    }
-
-    return originalMaskImage;
-}
-
-cv::Mat GVIMainFrame::getMaskImageByPath(const QString &path)
-{
-    cv::Mat originalImage = imread(path.toStdString());
-    if (originalImage.empty())
-    {
-        return Mat();
-    }
-
-    m_pImageProcessor->readImage(originalImage);
-    if (!m_pImageProcessor->startProcess())
-    {
-        return Mat();
-    }
-
-    cv::Mat originalMaskImage = m_pImageProcessor->getMaskImage();
-    if (originalMaskImage.empty())
-    {
-        return Mat();
-    }
-
-    return originalMaskImage;
-}
-
-cv::Mat GVIMainFrame::getProcessImageByIndex(int nIndex)
-{
-    cv::Mat originalImage = imread(m_pCarOriginalImageContainer->getImagePath(nIndex).toStdString());
-    if (originalImage.empty())
-    {
-        return Mat();
-    }
-
-    m_pImageProcessor->readImage(originalImage);
-    if (!m_pImageProcessor->startProcess())
-    {
-        return Mat();
-    }
-
-    cv::Mat originalProcessedImage = m_pImageProcessor->getProcessedImage(c_dPlateRegion);
-    if (originalProcessedImage.empty())
-    {
-        return Mat();
-    }
-
-    return originalProcessedImage;
-}
-
-cv::Mat GVIMainFrame::getProcessImageByPath(const QString &path)
-{
-    cv::Mat originalImage = imread(path.toStdString());
-    if (originalImage.empty())
-    {
-        return Mat();
-    }
-
-    m_pImageProcessor->readImage(originalImage);
-    if (!m_pImageProcessor->startProcess())
-    {
-        return Mat();
-    }
-
-    cv::Mat originalProcessedImage = m_pImageProcessor->getProcessedImage(c_dPlateRegion);
-    if (originalProcessedImage.empty())
-    {
-        return Mat();
-    }
-
-    return originalProcessedImage;
-}
-
-void GVIMainFrame::doShowMatchResult()
-{
-    updateIdentifyFrameInfo();
+    beginUpdateIdentifyFrame();
 
     showIdentifyFrame();
 
-    showMessageBox();
+    beginShowIdentifyMsgBox();
 }
 
-void GVIMainFrame::updateIdentifyFrameInfo()
+void GVIMainFrame::beginUpdateIdentifyFrame()
 {
     if (!canShowIdentifyFrame())
     {
@@ -531,30 +291,30 @@ void GVIMainFrame::updateIdentifyFrameInfo()
     }
 
     GVIImageConverter converter;
-    m_pIdentifyFrame->setDstImage(converter.converterQImage(m_finalProcessedSrcImage, m_pVideoImageLabel->size()));
+    m_pIdentifyFrame->setDstImage(converter.converterQImage(m_pImageDataRole->getFinalSrcProcessedImage(), m_pVideoImageLabel->size()));
 
-    if (m_bIsFake)
+    if (m_pImageDataRole->isFake())
     {
-        m_pIdentifyFrame->setTips(QString("The Similarity is %1%.").arg(QString::number((m_dFinalFakeSimilarty * 100), 'f', 2)));
-        m_pIdentifyFrame->setMatchImage(m_pCarOriginalImageContainer->getImage(m_nFinalFakeSimilartyIndex));
+        m_pIdentifyFrame->setTips(QString("The Similarity is %1%.").arg(QString::number((m_pImageDataRole->getFinalFakeSimilarty() * 100), 'f', 2)));
+        m_pIdentifyFrame->setMatchImage(m_pImageDataRole->getFinalFakeSimilartyImage());
     }
     else
     {
-        m_pIdentifyFrame->setTips(QString("The Similarity is %1%.").arg(QString::number((m_dFinalMaxSimilarty * 100), 'f', 2)));
-        m_pIdentifyFrame->setMatchImage(m_pCarOriginalImageContainer->getImage(m_nFinalMaxSimilartyIndex));
+        m_pIdentifyFrame->setTips(QString("The Similarity is %1%.").arg(QString::number((m_pImageDataRole->getFinalMaxSimilarty() * 100), 'f', 2)));
+        m_pIdentifyFrame->setMatchImage(m_pImageDataRole->getFinalMaxSimilartyImage());
     }
 }
 
-void GVIMainFrame::showMessageBox()
+void GVIMainFrame::beginShowIdentifyMsgBox()
 {
     if (!canShowIdentifyFrame())
     {
         return;
     }
 
-    if (m_bIsFake)
+    if (m_pImageDataRole->isFake())
     {
-        if (m_dFinalFakeSimilarty > c_dFakeThreshold)
+        if (m_pImageDataRole->getFinalFakeSimilarty() > c_dFakeThreshold)
         {
             QMessageBox::warning(this, "Fake", "The car has a deck risk, the administrator needs to pay attention to check!");
         }

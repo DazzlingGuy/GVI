@@ -2,6 +2,9 @@
 #include "config.h"
 
 #include <QCoreApplication>
+#include <QString>
+
+const double c_dPlateRegion = 1.8;
 
 GVIImageProcessor::GVIImageProcessor()
 {
@@ -10,15 +13,7 @@ GVIImageProcessor::GVIImageProcessor()
 
 GVIImageProcessor::~GVIImageProcessor()
 {
-    if (!m_oPlate.empty())
-    {
-        m_oPlate.clear();
-    }
 
-    if (!m_sLicense.empty())
-    {
-        m_sLicense.clear();
-    }
 }
 
 void GVIImageProcessor::init()
@@ -36,75 +31,100 @@ void GVIImageProcessor::init()
     m_PlateRecognize.LoadChineseMapping(qApp->applicationDirPath().toStdString() + easypr::kChineseMappingPath);
 }
 
-void GVIImageProcessor::readImage(string path)
+void GVIImageProcessor::readImage(const QString &path)
 {
-    m_srcImage.release();
-    m_dstImage.release();
+    initMatData();
 
-    if (path.length() > 0)
+    if (path.isNull())
     {
-        m_srcImage = imread(path).clone();
+        return;
     }
+
+    m_srcImage = imread(path.toStdString()).clone();
+
+    startProcess();
 }
 
-void GVIImageProcessor::readImage(Mat image)
+void GVIImageProcessor::readImage(const Mat &image)
 {
-    m_srcImage.release();
-    m_dstImage.release();
+    initMatData();
 
     m_srcImage = image.clone();
+
+    startProcess();
+}
+
+Mat GVIImageProcessor::getSrcImage()
+{
+    return m_srcImage;
+}
+
+Mat GVIImageProcessor::getProcessedImage()
+{
+    return m_srcProcessedImage;
+}
+
+Rect GVIImageProcessor::getProcessedRegion()
+{
+    return m_srcProcessedRegion;
+}
+
+Mat GVIImageProcessor::getMaskImage()
+{
+    return m_srcMaskImage;
+}
+
+Mat GVIImageProcessor::getMarkImage()
+{
+    return m_srcMarkImage;
+}
+
+QString GVIImageProcessor::getLicense()
+{
+    return m_sLicense;
+}
+
+void GVIImageProcessor::initMatData()
+{
+    m_srcImage.release();
+    m_srcProcessedImage.release();
+    m_srcMaskImage.release();
+
+    m_sLicense.clear();
+
+    m_oPlate.clear();
 }
 
 bool GVIImageProcessor::startProcess()
 {
-    int nPlate = 0;
-    bool bRes = false;
-
-    if (doProcess(nPlate))
+    if (doProcess())
     {
-        return bRes;
+        return false;
     }
 
     if (m_oPlate.empty())
     {
-        return bRes;
+        return false;
     }
 
-    easypr::CPlate plate = m_oPlate.at(0);
-    m_dstImage = plate.getPlateMat();
+    m_srcMaskImage = doGetMaskImage();
+    m_srcMarkImage = doGetMarkImage();
+    m_srcProcessedRegion = doGetProcessedRegion(c_dPlateRegion);
+    m_srcProcessedImage = doGetProcessedImage(c_dPlateRegion);
 
-    if (m_sLicense.length() > 0)
-    {
-        m_sLicense.clear();
-    }
-
-    m_sLicense = plate.getPlateStr();
+    m_sLicense = QString::fromStdString(m_oPlate.at(0).getPlateStr());
 
     return true;
 }
 
-bool GVIImageProcessor::doProcess(int &nPlate)
+bool GVIImageProcessor::doProcess()
 {
-    if (!m_oPlate.empty())
-    {
-        m_oPlate.clear();
-    }
-
-    nPlate = m_PlateRecognize.plateRecognize(m_srcImage, m_oPlate);
-
-    if (nPlate != 0)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return m_PlateRecognize.plateRecognize(m_srcImage, m_oPlate);
 }
 
-Mat GVIImageProcessor::getProcessedImage(double scalingFactor)
+Mat GVIImageProcessor::doGetProcessedImage(double scalingFactor)
 {
-    Rect plateRect = getRealPlateRegion();
+    Rect plateRect = doGetRealPlateRegion();
 
     int nVertexX = (plateRect.tl().x + plateRect.width / 2) - scalingFactor * plateRect.width / 2;
     int nVertexY = (plateRect.tl().y + plateRect.height / 2) - scalingFactor * plateRect.height / 2;
@@ -120,9 +140,26 @@ Mat GVIImageProcessor::getProcessedImage(double scalingFactor)
     return returnMat(scalingPlateRect);
 }
 
-Mat GVIImageProcessor::getMaskImage()
+Rect GVIImageProcessor::doGetProcessedRegion(double scalingFactor)
 {
-    Rect plateRect = getRealPlateRegion();
+    cv::Mat result;
+
+    Rect plateRect = doGetRealPlateRegion();
+
+    int nVertexX = (plateRect.tl().x + plateRect.width / 2) - scalingFactor * plateRect.width / 2;
+    int nVertexY = (plateRect.tl().y + plateRect.height / 2) - scalingFactor * plateRect.height / 2;
+
+    int nWidth = scalingFactor * plateRect.width;
+    int nHeight = scalingFactor * plateRect.height;
+
+    Rect srcImageRect = Rect(0, 0, m_srcImage.cols, m_srcImage.rows);
+
+    return srcImageRect & Rect(nVertexX, nVertexY, nWidth, nHeight);
+}
+
+Mat GVIImageProcessor::doGetMaskImage()
+{
+    Rect plateRect = doGetRealPlateRegion();
 
     int nVertexX = (plateRect.tl().x + plateRect.width / 2) - 3 * plateRect.width / 2;
     int nVertexY = (plateRect.tl().y + plateRect.height / 2) - 3 * plateRect.height / 2;
@@ -140,39 +177,17 @@ Mat GVIImageProcessor::getMaskImage()
     return maskImage;
 }
 
-Rect GVIImageProcessor::getProcessedRegion(double scalingFactor)
+cv::Mat GVIImageProcessor::doGetMarkImage()
 {
-    cv::Mat result;
+    cv::Mat markMat = m_srcImage.clone();
 
-    Rect plateRect = getRealPlateRegion();
+    Rect plateRegion = doGetProcessedRegion(c_dPlateRegion);
+    rectangle(markMat, plateRegion, Scalar(0, 0, 255), 3);
 
-    int nVertexX = (plateRect.tl().x + plateRect.width / 2) - scalingFactor * plateRect.width / 2;
-    int nVertexY = (plateRect.tl().y + plateRect.height / 2) - scalingFactor * plateRect.height / 2;
-
-    int nWidth = scalingFactor * plateRect.width;
-    int nHeight = scalingFactor * plateRect.height;
-
-    Rect srcImageRect = Rect(0, 0, m_srcImage.cols, m_srcImage.rows);
-
-    return srcImageRect & Rect(nVertexX, nVertexY, nWidth, nHeight);
+    return markMat;
 }
 
-Mat GVIImageProcessor::getSrcImage()
-{
-    return m_srcImage;
-}
-
-Mat GVIImageProcessor::getDstImage()
-{
-    return m_dstImage;
-}
-
-string GVIImageProcessor::getLicense()
-{
-    return m_sLicense;
-}
-
-Rect GVIImageProcessor::getRealPlateRegion()
+Rect GVIImageProcessor::doGetRealPlateRegion()
 {
     return m_oPlate.at(0).getPlatePos().boundingRect();
 }

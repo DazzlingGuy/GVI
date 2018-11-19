@@ -4,41 +4,56 @@
 #include <opencv2\opencv.hpp>
 #include "easypr.h"
 
+#include <QString>
+
 class GVIImageProcessor
 {
 public:
     GVIImageProcessor();
     ~GVIImageProcessor();
 
-    void init();
+    void readImage(const QString &path);
+    void readImage(const Mat &Image);
 
-    void readImage(string _path);
-    void readImage(Mat _Image);
-
-    bool startProcess();
-
-    Mat getProcessedImage(double scalingFactor = 2);
-    Rect getProcessedRegion(double scalingFactor = 2);
-    Mat getMaskImage();
-
-    Mat getDstImage();
     Mat getSrcImage();
 
-    string getLicense();
+    Mat getProcessedImage();
+    Rect getProcessedRegion();
+
+    Mat getMaskImage();
+    Mat getMarkImage();
+
+    QString getLicense();
 
 private:
-    bool doProcess(int &numPlate);
-    Rect getRealPlateRegion();
+    void init();
+    void initMatData();
+
+    bool startProcess();
+    bool doProcess();
+
+    Mat doGetProcessedImage(double scalingFactor);
+    Rect doGetProcessedRegion(double scalingFactor);
+
+    Mat doGetMaskImage();
+
+    Mat doGetMarkImage();
+
+    Rect doGetRealPlateRegion();
 
 private:
     Mat m_srcImage;
-    Mat m_dstImage;
+    Mat m_srcMaskImage;
+    Mat m_srcProcessedImage;
+    Mat m_srcMarkImage;
+
+    Rect m_srcProcessedRegion;
 
     easypr::CPlateRecognize m_PlateRecognize;
 
     vector<easypr::CPlate> m_oPlate;
 
-    string m_sLicense;
+    QString m_sLicense;
 };
 
 #endif // _GVIIMAGEPROCESSOR_H
