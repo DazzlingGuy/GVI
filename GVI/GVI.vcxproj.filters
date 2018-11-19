@@ -113,9 +113,6 @@
     <ClCompile Include="src\GVIUIPlugin\GVIPushButton.cpp">
       <Filter>Source Files\GVI\GVIUIPlugin</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="thirdPartys\LBP\helper.cpp">
       <Filter>Source Files\thirdPartys\LBP</Filter>
     </ClCompile>
@@ -217,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="src\GVIDataRole\GVIImageDataRole.cpp">
       <Filter>Source Files\GVI\GVIDataRole</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\GVI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
