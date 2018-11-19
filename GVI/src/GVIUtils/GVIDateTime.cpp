@@ -11,7 +11,7 @@ GVIDateTime::~GVIDateTime()
 {
 }
 
-std::string GVIDateTime::getCurrentTime()
+QString GVIDateTime::getCurrentTime()
 {
     time_t nowTimeBit = time(nullptr);
 
@@ -29,5 +29,5 @@ std::string GVIDateTime::getCurrentTime()
 
     std::string str = strTimeStream.str();
 
-    return str;
+    return QString::fromStdString(str);
 }

@@ -15,7 +15,7 @@ public:
     void setDstImage(const QImage &image);
     void setTips(const QString &strTips);
 
-protected:
+private:
     void init();
     void initFrame();
 

@@ -32,19 +32,16 @@ bool GVIVideoProcessor::openCamera(int cameraIndex)
     return bRes;
 }
 
-bool GVIVideoProcessor::saveImage(std::string &path)
+bool GVIVideoProcessor::saveImage(const QString &path)
 {
     bool bRes = false;
-    if (path.empty() || m_image.empty())
+
+    if (path.isNull() || m_image.empty())
     {
         return bRes;
     }
 
-    path = qApp->applicationDirPath().toStdString() + "/cameraImages/" + path + ".jpg";
-
-    bRes = imwrite(path, m_image);
-
-    return bRes;
+    return imwrite(path.toStdString(), m_image);
 }
 
 cv::Mat GVIVideoProcessor::getImage()

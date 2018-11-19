@@ -23,9 +23,9 @@ private:
     void init();
     void initAttribute();
     void initFrame();
-
     void initData();
 
+protected:
     void paintEvent(QPaintEvent *event) override;
 
     void mousePressEvent(QMouseEvent *event) override;

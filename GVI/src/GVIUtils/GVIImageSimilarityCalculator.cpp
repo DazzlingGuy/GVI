@@ -7,9 +7,6 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-using namespace cv;
-using namespace std;
-
 GVIImageSimilarityCalculator::GVIImageSimilarityCalculator()
 {
 }
@@ -18,8 +15,11 @@ GVIImageSimilarityCalculator::~GVIImageSimilarityCalculator()
 {
 }
 
-double GVIImageSimilarityCalculator::pixel_sim(Mat srcImage, Mat dstImage)
+double GVIImageSimilarityCalculator::pixel_sim(const Mat &srcImageInput, const Mat &dstImageInput)
 {
+    Mat srcImage = srcImageInput;
+    Mat dstImage = dstImageInput;
+
     cvtColor(srcImage, srcImage, CV_BGR2BGRA);
     cvtColor(dstImage, dstImage, CV_BGR2BGRA);
 
@@ -46,7 +46,7 @@ double GVIImageSimilarityCalculator::pixel_sim(Mat srcImage, Mat dstImage)
     return (1 - counter * 10 / (srcImage.rows*srcImage.cols));
 }
 
-double GVIImageSimilarityCalculator::orb_sim(Mat srcImage, Mat dstImage)
+double GVIImageSimilarityCalculator::orb_sim(const Mat &srcImage, const Mat &dstImage)
 {
     Ptr<ORB> orb = ORB::create();
 

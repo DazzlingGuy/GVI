@@ -4,9 +4,9 @@
 #include <opencv2\opencv.hpp>
 #include <QtWidgets/qmainwindow.h>
 
-using cv::Mat;
-using cv::imread;
-using cv::resize;
+class QImage;
+class QString;
+class QSize;
 
 class GVIImageConverter
 {
@@ -14,21 +14,20 @@ public:
     GVIImageConverter();
     ~GVIImageConverter();
 
-    bool importImageByFileName(const char *filename);
-    bool importImageByMatImage(const cv::Mat &inputImage);
-
-    QImage* exportImage(const QSize &wndSize);
+    QImage converterQImage(const QString &fileName, const QSize &wndSize);
+    QImage converterQImage(const cv::Mat &inputImage, const QSize &wndSize);
 
 private:
-    Mat m_orignImage;
-    Mat m_convertImage;
+    bool importImage(const QString &fileName);
+    bool importImage(const cv::Mat &inputImage);
 
-    QImage m_outputImage;
+    QImage doConverterQImage(const QSize &wndSize);
 
-    CvSize m_imageSize;
-    CvSize m_wndSize;
+private:
+    cv::Mat m_srcImage;
+    cv::Mat m_convertImage;
 
-    bool m_bConverted;
+    CvSize m_srcImageSize;
 };
 
 #endif // _GVIIMAGECONVERTER_H

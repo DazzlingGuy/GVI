@@ -50,9 +50,7 @@ private:
     void initControl();
     void initLayout();
     void initSlots();
-    void initImageContainer();
-
-    bool isNeedTakePhoto();
+    void initInageLabel();
 
     cv::Mat getMaskImageByIndex(int nIndex);
     cv::Mat getMaskImageByPath(const QString &path);
@@ -78,6 +76,7 @@ private:
     void showIdentifyFrame();
     void hideIdentifyFrame();
     void moveIdentifyFrame();
+    void canShowIdentifyFrame();
 
     void freeProcessDialog();
 
@@ -109,7 +108,6 @@ private:
     GVIIdentifyResultFrame *m_pIdentifyFrame;
     GVIProgressDialog *m_pProgressDialog;
 
-    bool m_bIsNeedPhoto;
     bool m_bIsPlay;
 
     bool m_bIsFake;

@@ -40,14 +40,13 @@ GVIMainFrame::GVIMainFrame(QWidget *parent)
     , m_pPrevBtn(nullptr)
     , m_pNextBtn(nullptr)
     , m_pDateTime(nullptr)
-    , m_pCameraImageContainer(nullptr)
-    , m_pCarOriginalImageContainer(nullptr)
     , m_pIdentifyFrame(nullptr)
     , m_pProgressDialog(nullptr)
     , m_pVideoProcessor(new GVIVideoProcessor())
     , m_pImageProcessor(new GVIImageProcessor())
+    , m_pCameraImageContainer(new GVIImageContainer(gviimagepath::strCameraImages))
+    , m_pCarOriginalImageContainer(new GVIImageContainer(gviimagepath::strCarOriginalImages))
     , m_qTimer(new QTimer())
-    , m_bIsNeedPhoto(false)
     , m_bIsPlay(false)
     , m_bIsFake(false)
     , m_dFinalMaxSimilarty(0)
@@ -75,9 +74,81 @@ void GVIMainFrame::init()
     initControl();
     initLayout();
     initSlots();
-    initImageContainer();
+    initInageLabel();
     initStyle();
+}
+
+void GVIMainFrame::initStyle()
+{
+    this->setStyleSheet(gviglobalstyle::strGlobalBtnStyle);
+
+    m_pVideoImageLabel->setStyleSheet(gviglobalstyle::strGlobalImageLabelStyle);
+    m_pMatchImageLabel->setStyleSheet(gviglobalstyle::strGlobalImageLabelStyle);
+}
+
+void GVIMainFrame::initControl()
+{
+    m_pVideoImageLabel = new QLabel();
+    m_pVideoImageLabel->setFixedSize(c_nImageWidth, c_nImageHeight);
+    m_pVideoImageLabel->setScaledContents(true);
+
+    m_pStartBtn = new GVIPushButton("Start");
+    m_pEndBtn = new GVIPushButton("End");
+    m_pPhotoBtn = new GVIPushButton("Photo");
+
+    m_pMatchImageLabel = new QLabel();
+    m_pMatchImageLabel->setFixedSize(c_nImageWidth, c_nImageHeight);
+    m_pMatchImageLabel->setScaledContents(true);
+
+    m_pPrevBtn = new GVIPushButton("Previous");
+    m_pNextBtn = new GVIPushButton("Next");
+    m_pIdentifyBtn = new GVIPushButton("Identify");
+
+    m_pIdentifyFrame = new GVIIdentifyResultFrame(this);
+}
+
+void GVIMainFrame::initLayout()
+{
+    auto pLeftBottomLayout = createCommonHBoxLayout();
+    pLeftBottomLayout->addWidget(m_pStartBtn);
+    pLeftBottomLayout->addWidget(m_pEndBtn);
+    pLeftBottomLayout->addWidget(m_pPhotoBtn);
+
+    auto pLeftLayout = createCommonVBoxLayout();
+    pLeftLayout->addWidget(m_pVideoImageLabel);
+    pLeftLayout->addSpacing(20);
+    pLeftLayout->addLayout(pLeftBottomLayout);
+
+    auto pRightBottomLayout = createCommonHBoxLayout();
+    pRightBottomLayout->addWidget(m_pPrevBtn);
+    pRightBottomLayout->addWidget(m_pNextBtn);
+    pRightBottomLayout->addWidget(m_pIdentifyBtn);
+
+    auto pRightLayout = createCommonVBoxLayout();
+    pRightLayout->addWidget(m_pMatchImageLabel);
+    pRightLayout->addSpacing(20);
+    pRightLayout->addLayout(pRightBottomLayout);
+
+    auto pMainLayout = createCommonHBoxLayout(this);
+    pMainLayout->addLayout(pLeftLayout);
+    pMainLayout->addLayout(pRightLayout);
+}
+
+void GVIMainFrame::initSlots()
+{
+    connect(m_pStartBtn, &QPushButton::clicked, this, &GVIMainFrame::onStartClicked);
+    connect(m_pEndBtn, &QPushButton::clicked, this, &GVIMainFrame::onEndClicked);
+    connect(m_pPhotoBtn, &QPushButton::clicked, this, &GVIMainFrame::onPhotoClicked);
+    connect(m_pIdentifyBtn, &QPushButton::clicked, this, &GVIMainFrame::onIdentifyClicked);
+    connect(m_pPrevBtn, &QPushButton::clicked, this, &GVIMainFrame::onPrevClicked);
+    connect(m_pNextBtn, &QPushButton::clicked, this, &GVIMainFrame::onNextClicked);
+}
+
+void GVIMainFrame::initInageLabel()
+{
     onStartClicked();
+
+    loadNextImage();
 }
 
 void GVIMainFrame::loadNextImage()
@@ -108,14 +179,6 @@ void GVIMainFrame::onStartClicked()
     {
         m_bIsPlay = true;
 
-        cv::Mat image = m_pVideoProcessor->getImage();
-
-        GVIImageConverter imgConverter;
-        if (imgConverter.importImageByMatImage(image))
-        {
-            this->m_pVideoImageLabel->setPixmap(QPixmap::fromImage(*imgConverter.exportImage(this->m_pVideoImageLabel->size())));
-        }
-
         connect(m_qTimer, &QTimer::timeout, this, &GVIMainFrame::onRefreshVideoImage);
 
         m_qTimer->start(30);
@@ -130,24 +193,26 @@ void GVIMainFrame::onEndClicked()
 
         disconnect(m_qTimer, &QTimer::timeout, this, &GVIMainFrame::onRefreshVideoImage);
 
-        this->m_pVideoImageLabel->setPixmap(QPixmap());
+        m_qTimer->stop();
     }
 }
 
 void GVIMainFrame::onPhotoClicked()
 {
-    m_bIsNeedPhoto = true;
-}
+    QString pictureDirPath = qApp->applicationDirPath() + gviimagepath::strCameraImages;
+    QString picturePath = pictureDirPath + GVIDateTime::getCurrentTime() + ".jpg";
 
-bool GVIMainFrame::isNeedTakePhoto()
-{
-    return m_bIsNeedPhoto;
+    if (!m_pVideoProcessor->saveImage(picturePath))
+    {
+        return;
+    }
+
+    m_pCameraImageContainer->insertImage(QImage(picturePath), picturePath);
 }
 
 void GVIMainFrame::showIdentifyFrame()
 {
-    if (m_pCarOriginalImageContainer->isEmpty()
-        || m_pCarOriginalImageContainer->isEmpty())
+    if (!canShowIdentifyFrame())
     {
         return;
     }
@@ -174,6 +239,11 @@ void GVIMainFrame::moveIdentifyFrame()
     m_pIdentifyFrame->move(point.x() + 798, point.y() - 164);
 }
 
+void GVIMainFrame::canShowIdentifyFrame()
+{
+    return !m_pCameraImageContainer->isEmpty() && !m_pCarOriginalImageContainer->isEmpty();
+}
+
 void GVIMainFrame::freeProcessDialog()
 {
     FREEANDNIL(m_pProgressDialog);
@@ -181,29 +251,9 @@ void GVIMainFrame::freeProcessDialog()
 
 void GVIMainFrame::onRefreshVideoImage()
 {
-    cv::Mat iamge = m_pVideoProcessor->getImage();
-    if (iamge.empty())
-    {
-        QMessageBox::information(NULL, "Play Video", "Error", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    }
+    GVIImageConverter converter;
 
-    GVIImageConverter imgConverter;
-    if (imgConverter.importImageByMatImage(iamge))
-    {
-        this->m_pVideoImageLabel->setPixmap(QPixmap::fromImage(*imgConverter.exportImage(this->m_pVideoImageLabel->size())));
-    }
-
-    if (isNeedTakePhoto())
-    {
-        string picturePath = GVIDateTime::getCurrentTime();
-        if (!m_pVideoProcessor->saveImage(picturePath))
-        {
-            QMessageBox::information(NULL, "Save Image", "Error", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-        }
-        m_pCameraImageContainer->insertImage(QImage(QString::fromStdString(picturePath)), QString::fromStdString(picturePath));
-
-        m_bIsNeedPhoto = false;
-    }
+    m_pVideoImageLabel->setPixmap(QPixmap::fromImage(converter.converterQImage(m_pVideoProcessor->getImage(), m_pVideoImageLabel->size())));
 }
 
 void GVIMainFrame::onIdentifyClicked()
@@ -240,18 +290,17 @@ void GVIMainFrame::reLoadData()
 
 void GVIMainFrame::reLoadImageContainer()
 {
-    m_pCameraImageContainer->reLoadImage();
+    m_pCameraImageContainer->reLoadContainer();
     m_pCameraImageContainer->setCurImage(-1);
     loadNextImage();
 
-    m_pCarOriginalImageContainer->reLoadImage();
+    m_pCarOriginalImageContainer->reLoadContainer();
     m_pCarOriginalImageContainer->setCurImage(0);
 }
 
 void GVIMainFrame::createProgressDialog()
 {
-    if (m_pCameraImageContainer->isEmpty()
-        || m_pCarOriginalImageContainer->isEmpty())
+    if (!canShowIdentifyFrame())
     {
         return;
     }
@@ -287,21 +336,17 @@ void GVIMainFrame::markSrcImage(cv::Mat srcImage)
     Rect plateRegion = m_pImageProcessor->getProcessedRegion(c_dPlateRegion);
     rectangle(srcImage, plateRegion, Scalar(0, 0, 255), 3);
 
-    GVIImageConverter imgConverter;
-    if (imgConverter.importImageByMatImage(srcImage))
-    {
-        m_pMatchImageLabel->setPixmap(QPixmap::fromImage(*imgConverter.exportImage(this->m_pMatchImageLabel->size())));
-    }
+    GVIImageConverter converter;
+    m_pMatchImageLabel->setPixmap(QPixmap::fromImage(converter.converterQImage(srcImage, m_pVideoImageLabel->size())));
 }
 
 void GVIMainFrame::calcSimilarty()
 {
-    GVIImageSimilarityCalculator similarityCalculator;
     for (size_t i = 0; i < m_pCarOriginalImageContainer->getImagesCount(); i++)
     {
         cv::Mat originalProcessedImage = getProcessImageByIndex(i);
 
-        double similartyValue = similarityCalculator.orb_sim(m_finalProcessedSrcImage, originalProcessedImage);
+        double similartyValue = GVIImageSimilarityCalculator::orb_sim(m_finalProcessedSrcImage, originalProcessedImage);
 
         if (m_dFinalMaxSimilarty < similartyValue && c_dFakeThreshold < similartyValue)
         {
@@ -326,7 +371,6 @@ void GVIMainFrame::dealMaskImage()
         return;
     }
 
-    GVIImageSimilarityCalculator similarityCalculator;
     if (-1 != m_nFinalMaxSimilartyIndex)
     {
         cv::Mat finalMaskDstImage = getMaskImageByIndex(m_nFinalMaxSimilartyIndex);
@@ -335,7 +379,7 @@ void GVIMainFrame::dealMaskImage()
             return;
         }
 
-        double dSimilarty = similarityCalculator.orb_sim(finalMaskSrcImage, finalMaskDstImage);
+        double dSimilarty = GVIImageSimilarityCalculator::orb_sim(finalMaskSrcImage, finalMaskDstImage);
 
         if (dSimilarty < c_dFakeThreshold)
         {
@@ -360,7 +404,7 @@ void GVIMainFrame::dealMaskImage()
                 return;
             }
 
-            double dSimilarty = similarityCalculator.orb_sim(finalMaskSrcImage, finalMaskDstImage);
+            double dSimilarty = GVIImageSimilarityCalculator::orb_sim(finalMaskSrcImage, finalMaskDstImage);
 
             if (dSimilarty > m_dFinalFakeSimilarty && dSimilarty > c_dFakeThreshold)
             {
@@ -481,17 +525,13 @@ void GVIMainFrame::doShowMatchResult()
 
 void GVIMainFrame::updateIdentifyFrameInfo()
 {
-    if (m_pCarOriginalImageContainer->isEmpty()
-        || m_pCarOriginalImageContainer->isEmpty())
+    if (!canShowIdentifyFrame())
     {
         return;
     }
 
-    GVIImageConverter imgConverter;
-    if (imgConverter.importImageByMatImage(m_finalProcessedSrcImage))
-    {
-        m_pIdentifyFrame->setDstImage(*imgConverter.exportImage(this->m_pMatchImageLabel->size()));
-    }
+    GVIImageConverter converter;
+    m_pIdentifyFrame->setDstImage(converter.converterQImage(m_finalProcessedSrcImage, m_pVideoImageLabel->size()));
 
     if (m_bIsFake)
     {
@@ -507,8 +547,7 @@ void GVIMainFrame::updateIdentifyFrameInfo()
 
 void GVIMainFrame::showMessageBox()
 {
-    if (m_pCarOriginalImageContainer->isEmpty()
-        || m_pCarOriginalImageContainer->isEmpty())
+    if (!canShowIdentifyFrame())
     {
         return;
     }
@@ -542,90 +581,16 @@ void GVIMainFrame::onNextClicked()
     hideIdentifyFrame();
 }
 
-void GVIMainFrame::initStyle()
-{
-    this->setStyleSheet(gviglobalstyle::strGlobalBtnStyle);
-
-    m_pVideoImageLabel->setStyleSheet(gviglobalstyle::strGlobalImageLabelStyle);
-    m_pMatchImageLabel->setStyleSheet(gviglobalstyle::strGlobalImageLabelStyle);
-}
-
-void GVIMainFrame::initControl()
-{
-    m_pVideoImageLabel = new QLabel();
-    m_pVideoImageLabel->setFixedSize(c_nImageWidth, c_nImageHeight);
-    m_pVideoImageLabel->setScaledContents(true);
-
-    m_pStartBtn = new GVIPushButton("Start");
-    m_pEndBtn = new GVIPushButton("End");
-    m_pPhotoBtn = new GVIPushButton("Photo");
-
-    m_pMatchImageLabel = new QLabel();
-    m_pMatchImageLabel->setFixedSize(c_nImageWidth, c_nImageHeight);
-    m_pMatchImageLabel->setScaledContents(true);
-
-    m_pPrevBtn = new GVIPushButton("Previous");
-    m_pNextBtn = new GVIPushButton("Next");
-    m_pIdentifyBtn = new GVIPushButton("Identify");
-
-    m_pIdentifyFrame = new GVIIdentifyResultFrame(this);
-}
-
-void GVIMainFrame::initLayout()
-{
-    auto pLeftBottomLayout = createCommonHBoxLayout();
-    pLeftBottomLayout->addWidget(m_pStartBtn);
-    pLeftBottomLayout->addWidget(m_pEndBtn);
-    pLeftBottomLayout->addWidget(m_pPhotoBtn);
-
-    auto pLeftLayout = createCommonVBoxLayout();
-    pLeftLayout->addWidget(m_pVideoImageLabel);
-    pLeftLayout->addSpacing(20);
-    pLeftLayout->addLayout(pLeftBottomLayout);
-
-    auto pRightBottomLayout = createCommonHBoxLayout();
-    pRightBottomLayout->addWidget(m_pPrevBtn);
-    pRightBottomLayout->addWidget(m_pNextBtn);
-    pRightBottomLayout->addWidget(m_pIdentifyBtn);
-
-    auto pRightLayout = createCommonVBoxLayout();
-    pRightLayout->addWidget(m_pMatchImageLabel);
-    pRightLayout->addSpacing(20);
-    pRightLayout->addLayout(pRightBottomLayout);
-
-    auto pMainLayout = createCommonHBoxLayout(this);
-    pMainLayout->addLayout(pLeftLayout);
-    pMainLayout->addLayout(pRightLayout);
-}
-
-void GVIMainFrame::initSlots()
-{
-    connect(m_pStartBtn, &QPushButton::clicked, this, &GVIMainFrame::onStartClicked);
-    connect(m_pEndBtn, &QPushButton::clicked, this, &GVIMainFrame::onEndClicked);
-    connect(m_pPhotoBtn, &QPushButton::clicked, this, &GVIMainFrame::onPhotoClicked);
-    connect(m_pIdentifyBtn, &QPushButton::clicked, this, &GVIMainFrame::onIdentifyClicked);
-    connect(m_pPrevBtn, &QPushButton::clicked, this, &GVIMainFrame::onPrevClicked);
-    connect(m_pNextBtn, &QPushButton::clicked, this, &GVIMainFrame::onNextClicked);
-}
-
-void GVIMainFrame::initImageContainer()
-{
-    m_pCameraImageContainer = new GVIImageContainer(gviimagepath::strCameraImages);
-    m_pCarOriginalImageContainer = new GVIImageContainer(gviimagepath::strCarOriginalImages);
-
-    loadNextImage();
-}
-
 QHBoxLayout* GVIMainFrame::createCommonHBoxLayout(QWidget *parent)
 {
     auto* pLayout = new QHBoxLayout(parent);
-    //pLayout->setAlignment(Qt::AlignCenter);
+
     return pLayout;
 }
 
 QVBoxLayout* GVIMainFrame::createCommonVBoxLayout(QWidget *parent)
 {
     auto* pLayout = new QVBoxLayout(parent);
-    //pLayout->setAlignment(Qt::AlignCenter);
+
     return pLayout;
 }

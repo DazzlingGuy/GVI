@@ -12,7 +12,7 @@ public:
 
     void init();
 
-    void readImageByPath(string _path);
+    void readImage(string _path);
     void readImage(Mat _Image);
 
     bool startProcess();

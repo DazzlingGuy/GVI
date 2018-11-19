@@ -36,7 +36,7 @@ void GVIImageProcessor::init()
     m_PlateRecognize.LoadChineseMapping(qApp->applicationDirPath().toStdString() + easypr::kChineseMappingPath);
 }
 
-void GVIImageProcessor::readImageByPath(string path)
+void GVIImageProcessor::readImage(string path)
 {
     m_srcImage.release();
     m_dstImage.release();

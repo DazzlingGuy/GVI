@@ -16,13 +16,14 @@ class GVIApplication : public GVIBaseFrame
 public:
     GVIApplication(QWidget *parent = Q_NULLPTR);
 
-protected:
+private:
     void init();
     void initControl();
     void initStyle();
     void initLayout();
     void initSlots();
 
+protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
     protected slots:

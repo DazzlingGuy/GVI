@@ -8,10 +8,10 @@ GVIImageContainer::GVIImageContainer(const QString &dirPath)
     : m_nCurIndex(-1)
     , m_sDirPath(dirPath)
 {
-    doLoadImages();
+    doLoadContainer();
 }
 
-void GVIImageContainer::doLoadImages()
+void GVIImageContainer::doLoadContainer()
 {
     QString strOriginalImagesPath = qApp->applicationDirPath() + m_sDirPath;
     QDir originalImagesDir(strOriginalImagesPath);
@@ -158,11 +158,11 @@ void GVIImageContainer::removeImage(const QImage &image, int nIndex)
     m_oMapIndexToImagePath.remove(nIndex);
 }
 
-void GVIImageContainer::reLoadImage()
+void GVIImageContainer::reLoadContainer()
 {
     m_oImages.clear();
     m_oMapIndexToImagePath.clear();
     m_nCurIndex = -1;
 
-    doLoadImages();
+    doLoadContainer();
 }

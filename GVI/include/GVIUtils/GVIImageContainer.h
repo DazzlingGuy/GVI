@@ -33,10 +33,10 @@ public:
     void insertImage(const QImage &image, const QString &imagePath);
     void removeImage(const QImage &image, int nIndex);
 
-    void reLoadImage();
+    void reLoadContainer();
 
 private:
-    void doLoadImages();
+    void doLoadContainer();
 
 private:
     Images m_oImages;
