@@ -2,16 +2,22 @@
 #include "GVIImageProcessor.h"
 #include "GVIImageSimilarityCalculator.h"
 #include "GVIConsts.h"
+#include "GVIMacro.h"
 #include "GVIImageContainer.h"
+#include "GVIProgressDialog.h"
 
 #include <QImage>
+#include <QCoreApplication>
 
 const double c_dFakeThreshold = 0.7;
+
+const QString s_szIdentifyTips = "Identify...";
 
 GVIImageDataRole::GVIImageDataRole(const QString &fileName)
     : m_pCarOriginalImageContainer(new GVIImageContainer(gviimagepath::strCarOriginalImages))
     , m_pSrcImageProcessor(new GVIImageProcessor())
     , m_pDstImageProcessor(new GVIImageProcessor())
+    , m_pProgressDialog(nullptr)
     , m_bIsFake(false)
     , m_bIsComparison(false)
     , m_dFinalMaxSimilarty(0.0)
@@ -53,6 +59,11 @@ cv::Mat GVIImageDataRole::getFinalSrcProcessedImage()
     return m_pSrcImageProcessor->getProcessedImage();
 }
 
+cv::Mat GVIImageDataRole::getFinalSrcMarkImage()
+{
+    return m_pSrcImageProcessor->getMarkImage();
+}
+
 int GVIImageDataRole::getComparisonCount()
 {
     return m_pCarOriginalImageContainer->getImagesCount();
@@ -71,8 +82,13 @@ bool GVIImageDataRole::isComparison()
 void GVIImageDataRole::init()
 {
     initSrcData();
+
+    createProgressDialog();
+
     calcPlateSimilarty();
     calcMaskSimilarty();
+
+    freeProgressDialog();
 }
 
 void GVIImageDataRole::initSrcData()
@@ -116,6 +132,8 @@ void GVIImageDataRole::calcPlateSimilarty()
         {
             m_oLikeFakeImageIndex.append(i);
         }
+
+        updateProgressDialog(i + 1);
     }
 }
 
@@ -145,6 +163,8 @@ void GVIImageDataRole::calcMaskSimilarty()
             m_nFinalFakeSimilartyIndex = m_nFinalMaxSimilartyIndex;
             m_bIsFake = true;
         }
+
+        m_bIsComparison = true;
     }
     else
     {
@@ -172,8 +192,43 @@ void GVIImageDataRole::calcMaskSimilarty()
                 m_dFinalMaxSimilarty = dSimilarty;
                 m_nFinalMaxSimilartyIndex = nIndex;
             }
+
+            m_bIsComparison = true;
         }
     }
+}
 
-    m_bIsComparison = true;
+bool GVIImageDataRole::canShowIdentifyFrame()
+{
+    if (m_pSrcImageProcessor->getSrcImage().empty()
+        || m_pCarOriginalImageContainer->isEmpty())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void GVIImageDataRole::createProgressDialog()
+{
+    if (!canShowIdentifyFrame())
+    {
+        return;
+    }
+
+    QCoreApplication::processEvents();
+    m_pProgressDialog = new GVIProgressDialog(s_szIdentifyTips, m_pCarOriginalImageContainer->getImagesCount());
+    m_pProgressDialog->updateProgress(0);
+    m_pProgressDialog->show();
+}
+
+void GVIImageDataRole::updateProgressDialog(int nIndex)
+{
+    QCoreApplication::processEvents();
+    m_pProgressDialog->updateProgress(nIndex);
+}
+
+void GVIImageDataRole::freeProgressDialog()
+{
+    FREEANDNIL(m_pProgressDialog);
 }

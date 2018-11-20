@@ -42,6 +42,11 @@ void GVIImageProcessor::readImage(const QString &path)
 
     m_srcImage = imread(path.toStdString()).clone();
 
+    if (m_srcImage.empty())
+    {
+        return;
+    }
+
     startProcess();
 }
 
@@ -50,6 +55,11 @@ void GVIImageProcessor::readImage(const Mat &image)
     initMatData();
 
     m_srcImage = image.clone();
+
+    if (m_srcImage.empty())
+    {
+        return;
+    }
 
     startProcess();
 }

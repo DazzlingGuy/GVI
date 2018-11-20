@@ -15,7 +15,6 @@ class GVIIdentifyResultFrame;
 class GVIVideoProcessor;
 class GVIDateTime;
 class GVIImageProcessor;
-class GVIProgressDialog;
 class GVIImageDataRole;
 
 class GVIMainFrame : public QWidget
@@ -57,15 +56,12 @@ private:
     bool canShowIdentifyFrame();
 
     void beginShowIdentifyFrame();
-    void beginUpdateIdentifyFrame();
-    void beginShowIdentifyMsgBox();
+    void updateIdentifyFrame();
+    void showIdentifyMsgBox();
 
     void showIdentifyFrame();
     void hideIdentifyFrame();
     void moveIdentifyFrame();
-
-    void createProgressDialog();
-    void freeProcessDialog();
 
     inline QHBoxLayout* createCommonHBoxLayout(QWidget *parent = nullptr);
     inline QVBoxLayout* createCommonVBoxLayout(QWidget *parent = nullptr);
@@ -93,7 +89,6 @@ private:
     QTimer *m_qTimer;
 
     GVIIdentifyResultFrame *m_pIdentifyFrame;
-    GVIProgressDialog *m_pProgressDialog;
 
     bool m_bIsPlay;
 };

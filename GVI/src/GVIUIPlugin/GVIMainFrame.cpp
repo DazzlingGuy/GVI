@@ -8,23 +8,20 @@
 #include "GVIVideoProcessor.h"
 #include "GVIDateTime.h"
 #include <GVIImageDataRole.h>
-#include "GVIProgressDialog.h"
 
 #include <QTimer>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QCoreApplication>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QCoreApplication>
 
 const int c_nImageHeight = 465;
 const int c_nImageWidth = 465;
 
 const double c_dFakeThreshold = 0.7;
-
-const QString s_szIdentifyTips = "Identify...";
 
 GVIMainFrame::GVIMainFrame(QWidget *parent)
     : QWidget(parent)
@@ -38,7 +35,7 @@ GVIMainFrame::GVIMainFrame(QWidget *parent)
     , m_pNextBtn(nullptr)
     , m_pDateTime(nullptr)
     , m_pIdentifyFrame(nullptr)
-    , m_pProgressDialog(nullptr)
+    , m_pImageDataRole(nullptr)
     , m_qTimer(new QTimer())
     , m_bIsPlay(false)
     , m_pCameraImageContainer(new GVIImageContainer(gviimagepath::strCameraImages))
@@ -230,12 +227,14 @@ void GVIMainFrame::moveIdentifyFrame()
 
 bool GVIMainFrame::canShowIdentifyFrame()
 {
-    return m_pImageDataRole->isComparison();
-}
+    bool bRes = false;
 
-void GVIMainFrame::freeProcessDialog()
-{
-    FREEANDNIL(m_pProgressDialog);
+    if (m_pImageDataRole)
+    {
+        bRes = m_pImageDataRole->isComparison();
+    }
+
+    return bRes;
 }
 
 void GVIMainFrame::onRefreshVideoImage()
@@ -247,43 +246,33 @@ void GVIMainFrame::onRefreshVideoImage()
 
 void GVIMainFrame::onIdentifyClicked()
 {
-    createProgressDialog();
-
     beginImageSimilartyMatch();
 
     beginShowIdentifyFrame();
-
-    freeProcessDialog();
-}
-
-void GVIMainFrame::createProgressDialog()
-{
-    if (!canShowIdentifyFrame())
-    {
-        return;
-    }
-
-    QCoreApplication::processEvents();
-    m_pProgressDialog = new GVIProgressDialog(s_szIdentifyTips, m_pImageDataRole->getComparisonCount(), this);
-    m_pProgressDialog->updateProgress(0);
-    m_pProgressDialog->show();
 }
 
 void GVIMainFrame::beginImageSimilartyMatch()
 {
+    m_pCameraImageContainer->reLoadContainer();
+    m_pCameraImageContainer->setCurImage(-1);
+    loadNextImage();
+
     m_pImageDataRole = new GVIImageDataRole(m_pCameraImageContainer->getCurImagePath());
+
+    GVIImageConverter converter;
+    m_pMatchImageLabel->setPixmap(QPixmap::fromImage(converter.converterQImage(m_pImageDataRole->getFinalSrcMarkImage(), m_pMatchImageLabel->size())));
 }
 
 void GVIMainFrame::beginShowIdentifyFrame()
 {
-    beginUpdateIdentifyFrame();
+    updateIdentifyFrame();
 
     showIdentifyFrame();
 
-    beginShowIdentifyMsgBox();
+    showIdentifyMsgBox();
 }
 
-void GVIMainFrame::beginUpdateIdentifyFrame()
+void GVIMainFrame::updateIdentifyFrame()
 {
     if (!canShowIdentifyFrame())
     {
@@ -305,7 +294,7 @@ void GVIMainFrame::beginUpdateIdentifyFrame()
     }
 }
 
-void GVIMainFrame::beginShowIdentifyMsgBox()
+void GVIMainFrame::showIdentifyMsgBox()
 {
     if (!canShowIdentifyFrame())
     {

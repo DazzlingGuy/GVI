@@ -10,6 +10,7 @@ using namespace cv;
 
 class GVIImageProcessor;
 class GVIImageContainer;
+class GVIProgressDialog;
 
 class QImage;
 
@@ -27,6 +28,8 @@ public:
 
     Mat getFinalSrcProcessedImage();
 
+    Mat getFinalSrcMarkImage();
+
     int getComparisonCount();
 
     bool isFake();
@@ -39,11 +42,19 @@ private:
     void calcPlateSimilarty();
     void calcMaskSimilarty();
 
+    bool canShowIdentifyFrame();
+
+    void createProgressDialog();
+    void updateProgressDialog(int nIndex);
+    void freeProgressDialog();
+
 private:
     QString m_sFileName;
 
     GVIImageProcessor *m_pSrcImageProcessor;
     GVIImageProcessor *m_pDstImageProcessor;
+
+    GVIProgressDialog *m_pProgressDialog;
 
     GVIImageContainer *m_pCarOriginalImageContainer;
 
