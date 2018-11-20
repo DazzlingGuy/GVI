@@ -13,6 +13,7 @@ GVIImageDataRole::GVIImageDataRole(const QString &fileName)
     , m_pSrcImageProcessor(new GVIImageProcessor())
     , m_pDstImageProcessor(new GVIImageProcessor())
     , m_bIsFake(false)
+    , m_bIsComparison(false)
     , m_dFinalMaxSimilarty(0.0)
     , m_dFinalFakeSimilarty(0.0)
     , m_nFinalMaxSimilartyIndex(-1)
@@ -52,9 +53,19 @@ cv::Mat GVIImageDataRole::getFinalSrcProcessedImage()
     return m_pSrcImageProcessor->getProcessedImage();
 }
 
+int GVIImageDataRole::getComparisonCount()
+{
+    return m_pCarOriginalImageContainer->getImagesCount();
+}
+
 bool GVIImageDataRole::isFake()
 {
     return m_bIsFake;
+}
+
+bool GVIImageDataRole::isComparison()
+{
+    return m_bIsComparison;
 }
 
 void GVIImageDataRole::init()
@@ -67,6 +78,13 @@ void GVIImageDataRole::init()
 void GVIImageDataRole::initSrcData()
 {
     m_pSrcImageProcessor->readImage(m_sFileName);
+
+    m_pCarOriginalImageContainer->reLoadContainer();
+
+    m_oLikeFakeImageIndex.clear();
+
+    m_bIsFake = false;
+    m_bIsComparison = false;
 }
 
 void GVIImageDataRole::calcPlateSimilarty()
@@ -156,9 +174,6 @@ void GVIImageDataRole::calcMaskSimilarty()
             }
         }
     }
-}
 
-void GVIImageDataRole::initImageContainer()
-{
-    m_pCarOriginalImageContainer->reLoadContainer();
+    m_bIsComparison = true;
 }

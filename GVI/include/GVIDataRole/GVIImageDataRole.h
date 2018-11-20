@@ -27,7 +27,10 @@ public:
 
     Mat getFinalSrcProcessedImage();
 
+    int getComparisonCount();
+
     bool isFake();
+    bool isComparison();
 
 private:
     void init();
@@ -35,8 +38,6 @@ private:
     void initSrcData();
     void calcPlateSimilarty();
     void calcMaskSimilarty();
-
-    void initImageContainer();
 
 private:
     QString m_sFileName;
@@ -49,6 +50,7 @@ private:
     QVector<int> m_oLikeFakeImageIndex;
 
     bool m_bIsFake;
+    bool m_bIsComparison;
 
     double m_dFinalMaxSimilarty;
     double m_dFinalFakeSimilarty;

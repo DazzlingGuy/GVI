@@ -50,7 +50,7 @@ private:
     void initControl();
     void initLayout();
     void initSlots();
-    void initInageLabel();
+    void initImageLabel();
 
     void beginImageSimilartyMatch();
 

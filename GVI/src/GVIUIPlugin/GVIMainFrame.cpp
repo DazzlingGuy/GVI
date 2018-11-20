@@ -63,7 +63,7 @@ void GVIMainFrame::init()
     initControl();
     initLayout();
     initSlots();
-    initInageLabel();
+    initImageLabel();
     initStyle();
 }
 
@@ -133,7 +133,7 @@ void GVIMainFrame::initSlots()
     connect(m_pNextBtn, &QPushButton::clicked, this, &GVIMainFrame::onNextClicked);
 }
 
-void GVIMainFrame::initInageLabel()
+void GVIMainFrame::initImageLabel()
 {
     onStartClicked();
 
@@ -230,7 +230,7 @@ void GVIMainFrame::moveIdentifyFrame()
 
 bool GVIMainFrame::canShowIdentifyFrame()
 {
-    return true;
+    return m_pImageDataRole->isComparison();
 }
 
 void GVIMainFrame::freeProcessDialog()
@@ -247,26 +247,26 @@ void GVIMainFrame::onRefreshVideoImage()
 
 void GVIMainFrame::onIdentifyClicked()
 {
-    //createProgressDialog();
+    createProgressDialog();
 
     beginImageSimilartyMatch();
 
     beginShowIdentifyFrame();
 
-    //freeProcessDialog();
+    freeProcessDialog();
 }
 
 void GVIMainFrame::createProgressDialog()
 {
-//     if (!canShowIdentifyFrame())
-//     {
-//         return;
-//     }
-// 
-//     QCoreApplication::processEvents();
-//     m_pProgressDialog = new GVIProgressDialog(s_szIdentifyTips, m_pCarOriginalImageContainer->getImagesCount(), this);
-//     m_pProgressDialog->updateProgress(0);
-//     m_pProgressDialog->show();
+    if (!canShowIdentifyFrame())
+    {
+        return;
+    }
+
+    QCoreApplication::processEvents();
+    m_pProgressDialog = new GVIProgressDialog(s_szIdentifyTips, m_pImageDataRole->getComparisonCount(), this);
+    m_pProgressDialog->updateProgress(0);
+    m_pProgressDialog->show();
 }
 
 void GVIMainFrame::beginImageSimilartyMatch()
